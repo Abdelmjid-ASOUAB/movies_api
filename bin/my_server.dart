@@ -15,15 +15,20 @@ Future<void> main() async {
 Future<void> handleRequests(HttpServer server) async {
   await for (HttpRequest request in server) {
     if (request.uri.path.contains("search")) {
-      print(request.uri);
-      print(request.headers);
+      var q = request.uri.queryParameters.containsKey("q")
+          ? request.uri.queryParameters["q"].toString()
+          : "";
 
-      request.response.write(await searchByName("superman of"));
+      request.response.write(await searchByName(q));
     } else if (request.uri.path.contains("load")) {
-      String link = request.headers["movie_link"]!.first;
+      if (!request.uri.queryParameters.containsKey("link")) {
+        request.response.write({"success": false});
+      } else {
+        String link = request.uri.queryParameters["link"].toString();
 
-      request.response
-          .write(await runScript(link: "https://w.egybest.org$link"));
+        request.response
+            .write(await runScript(link: "https://w.egybest.org$link"));
+      }
     }
 
     await request.response.close();
