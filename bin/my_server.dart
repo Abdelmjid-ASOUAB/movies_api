@@ -59,8 +59,7 @@ Future<HttpServer> createServer() async {
 Future<String> runScript({required link}) async {
   try {
     var shell = Shell();
-    Process d = Process():
-    var result = await shell.start("python3 script.py $link");
+    var result = await shell.run("python3 script.py $link");
 
     print("=>${result.outLines.last}");
     var name = jsonDecode(result.outLines.last);
